@@ -27,9 +27,7 @@
 /* misans字体 */
 @font-face {
     font-family: 'misans';
-    src: url('../fonts/misans.woff2') format('woff2'),
-        url('../fonts/misans,woff') format('woff'),
-        url('../fonts/misans.ttf') format('truetype');
+    src: url('../fonts/misans.woff2') format('woff2');
     font-display: swap;
 }
 body {
