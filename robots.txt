@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /audio/
+Disallow: /css/
+Disallow: /fonts/
+Disallow: /img/
+Disallow: /js/
+Disallow: LICENSE
+Disallow: README.md
+Disallow: BingSiteAuth.xml
+Sitemap: https://genshin-music.68j87.top/sitemap.xml
