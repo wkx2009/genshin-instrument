@@ -32,7 +32,7 @@ genshin-instrument/
 ├─ index.html          # 主页面
 ├─ README.md           # 项目说明（本文档）
 └─ favicon.ico        # 网站图标
-
+```
 ## 🚀 快速开始
 ### 1. 环境准备
 - 无需额外依赖，直接通过浏览器打开 `index.html` 即可运行
