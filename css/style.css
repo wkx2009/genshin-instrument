@@ -24,14 +24,15 @@
     --genshin-blue: #1a2f51;
     --genshin-dark-blue: #121a29;
 }
-/* misans字体 */
+/*
+
 @font-face {
     font-family: 'misans';
     src: url('../fonts/misans.woff2') format('woff2');
     font-display: swap;
-}
+}*/
 body {
-    font-family: 'misans', 'Arial', sans-serif;
+    /*font-family: 'misans', 'Arial', sans-serif;*/
     background: url('../img/background.jpg') no-repeat center fixed;
     background-color: var(--genshin-dark-blue);
     background-size: cover;
@@ -446,7 +447,7 @@ body {
     color: var(--background-text2);
     background-color: rgb(53, 61, 79);
     outline: 1px solid rgb(93, 93, 95);
-    font-family: 'misans', Fallback, sans-serif;
+    /*font-family: 'misans', Fallback, sans-serif;*/
     border-radius: 5px;
 }
 /* 按钮组样式 */
@@ -463,7 +464,7 @@ body {
     border-radius: 5px;
     background-color: var(--input-color);
     color: var(--foreground-text);
-    font-family: 'misans', Fallback, sans-serif;
+    /*font-family: 'misans', Fallback, sans-serif;*/
     cursor: pointer;
     transition: all 0.15s ease;
 }
