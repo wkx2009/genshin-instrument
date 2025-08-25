@@ -1,0 +1,688 @@
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:root {
+    --animation-color: rgb(144, 249, 227);
+    --background-color: rgb(224, 223, 209);
+    --background-color-hover1: rgb(144, 249, 227);
+    --background-color-hover2: rgba(144, 249, 227, 0.8);
+    --box-shadow-color1: rgb(212, 212, 196);
+    --box-shadow-color2: rgb(223, 223, 198);
+    --note-color: rgb(88, 153, 144);
+    --dialog-background-color: #3e4556;
+    --background-text1: #d3bc8e;
+    --input-color: #ede5d8;
+    --background-text2: rgb(236,229,216);
+    --foreground-text: #3b4255;
+    --dialog-shadow-color1: rgb(60, 67, 83);
+    --dialog-shadow-color2: rgb(57, 62, 82);
+    --selection-color: rgb(172,157,127);
+    --genshin-gold: #d3bc8e;
+    --genshin-blue: #1a2f51;
+    --genshin-dark-blue: #121a29;
+}
+/* misans字体 */
+@font-face {
+    font-family: 'misans';
+    src: url('../fonts/misans.woff2') format('woff2'),
+        url('../fonts/misans,woff') format('woff'),
+        url('../fonts/misans.ttf') format('truetype');
+    font-display: swap;
+}
+body {
+    font-family: 'misans', 'Arial', sans-serif;
+    background: url('../img/background.jpg') no-repeat center fixed;
+    background-color: var(--genshin-dark-blue);
+    background-size: cover;
+    color: var(--genshin-gold);
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    user-select: none;
+}
+/* 加载界面 */
+.loadDiv {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(30, 35, 48, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: var(--genshin-gold);
+    font-size: 24px;
+    backdrop-filter: blur(5px);
+}
+/* 顶部控制栏 */
+.top-controls {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1000px;
+    margin-bottom: 30px;
+    z-index: 100;
+}
+/* 乐器选择下拉框 */
+.instrument-selection {
+    position: relative;
+}
+.combo-box {
+    background: rgba(62, 69, 86, 0.8);
+    border-radius: 20px;
+    padding: 10px 20px;
+    color: var(--input-color);
+    cursor: pointer;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    min-width: 180px;
+    border: 1px solid rgba(211, 188, 142, 0.3);
+    position: relative;
+}
+.combo-box:hover {
+    background: rgba(78, 85, 102, 0.9);
+    transform: translateY(-2px);
+}
+.combo-items {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(62, 69, 86, 0.95);
+    border-radius: 10px;
+    margin-top: 5px;
+    padding: 10px;
+    z-index: 200;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(211, 188, 142, 0.2);
+}
+.combo-items p {
+    padding: 8px;
+    border-radius: 8px;
+    margin: 5px 0;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.combo-items p:hover {
+    background: rgba(114, 125, 147, 0.6);
+}
+/* 功能按钮 */
+.toolbar {
+    display: flex;
+    gap: 15px;
+}
+/* 1. 功能按钮（转调/自动弹奏）：绑定乐器颜色变量 */
+.music {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(62, 69, 86, 0.8);
+    border-radius: 15px;
+    padding: 12px;
+    min-width: 80px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--note-color); /* 绑定乐器颜色 */
+}
+.music:hover {
+    background: rgba(78, 85, 102, 0.9);
+    transform: translateY(-3px);
+    box-shadow: 0 0 10px var(--background-color-hover2); /* 绑定乐器光效色 */
+}
+.musicClef {
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: var(--note-color); /* 绑定乐器颜色 */
+}
+
+.btn-text {
+    font-size: 12px;
+    color: var(--genshin-gold);
+}
+/* 琴键区域 */
+.keyboard-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 50px;
+    position: relative;
+    z-index: 2;
+}
+#keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    z-index: 3;
+}
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    align-items: center;
+}
+/* 琴键三角装饰（核心修复） */
+.triangle {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 70px;
+    height: 70px;
+    z-index: 2;
+}
+.triangle-top, .triangle-left, .triangle-right, .triangle-bottom {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    z-index: 1;
+    transition: border-color 0.2s ease;
+}
+.triangle-top {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0 8px 8px 8px;
+    border-color: transparent transparent var(--background-color) transparent;
+}
+.triangle-bottom {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px 8px 0 8px;
+    border-color: var(--background-color) transparent transparent transparent;
+}
+.triangle-left {
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 8px 8px 8px 0;
+    border-color: transparent var(--background-color) transparent transparent;
+}
+.triangle-right {
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 8px 0 8px 8px;
+    border-color: transparent transparent transparent var(--background-color);
+}
+/* 琴键样式 */
+.key {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(224, 223, 209, 0.9);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+    transition: all 0.2s ease;
+}
+.key:hover {
+    transform: scale(1.05);
+}
+.key:active {
+    transform: scale(0.95);
+}
+/* 琴键按下时：三角同步变色 */
+.key-press ~ .triangle-top {
+    border-color: transparent transparent var(--background-color-hover1) transparent;
+}
+.key-press ~ .triangle-bottom {
+    border-color: var(--background-color-hover1) transparent transparent transparent;
+}
+.key-press ~ .triangle-left {
+    border-color: transparent var(--background-color-hover1) transparent transparent;
+}
+.key-press ~ .triangle-right {
+    border-color: transparent transparent transparent var(--background-color-hover1);
+}
+/* 音符样式 */
+.note2, .note3, .note1, .note5 {
+    font-size: 24px;
+    color: var(--note-color);
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+.text {
+    font-size: 12px;
+    color: #776e5a;
+}
+/* 音量控制 */
+.volume-control {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    background: rgba(62, 69, 86, 0.8);
+    padding: 10px 15px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(211, 188, 142, 0.3);
+}
+.volume-control span {
+    margin-right: 10px;
+    color: var(--genshin-gold);
+    font-size: 14px;
+}
+#volume {
+    width: 100px;
+    accent-color: var(--note-color);
+}
+/* 控制面板（初始隐藏） */
+.control-panel {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(62, 69, 86, 0.8);
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(211, 188, 142, 0.3);
+    z-index: 99;
+    display: none; /* 初始隐藏，点击按钮显示 */
+}
+.control-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: var(--genshin-gold);
+    text-align: center;
+}
+.control-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.control-item label {
+    margin-right: 8px;
+    color: var(--genshin-gold);
+    font-size: 14px;
+    min-width: 60px;
+}
+.control-item input {
+    width: 60px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid rgba(211, 188, 142, 0.3);
+    background: rgba(237, 229, 216, 0.9);
+    color: var(--foreground-text);
+}
+/* 原神风格装饰 */
+.genshin-decoration {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+.decoration-item {
+    position: absolute;
+    opacity: 0.1;
+}
+.decoration-1 {
+    top: 10%;
+    left: 5%;
+    font-size: 100px;
+    color: var(--genshin-gold);
+    transform: rotate(-15deg);
+}
+.decoration-2 {
+    bottom: 15%;
+    right: 8%;
+    font-size: 80px;
+    color: var(--note-color);
+    transform: rotate(20deg);
+}
+/* 响应式设计（移动端适配） */
+@media (max-width: 768px) {
+    .top-controls {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    .triangle {
+        width: 50px;
+        height: 50px;
+    }
+    .key {
+        width: 40px;
+        height: 40px;
+    }
+    .note2, .note3, .note1, .note5 {
+        font-size: 16px;
+    }
+    .text {
+        font-size: 10px;
+    }
+    .keyboard-row {
+        gap: 5px;
+    }
+    .control-panel {
+        bottom: 10px;
+        left: 10px;
+        padding: 10px;
+    }
+}
+/* 动画效果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+@keyframes press {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+@keyframes noteGlow {
+    0% {
+        text-shadow: 0 0 5px currentColor;
+    }
+    50% {
+        text-shadow: 0 0 20px currentColor;
+    }
+    100% {
+        text-shadow: 0 0 5px currentColor;
+    }
+}
+body {
+    animation: fadeIn 0.5s ease-in;
+}
+.key-press {
+    animation: press 0.3s ease;
+}
+.music-color {
+    animation: noteGlow 2s infinite;
+}
+
+/* -------------------------- 自动演奏/转调面板样式 -------------------------- */
+/* 自动演奏面板特殊样式（适配乐谱输入框） */
+#auto-play-panel .full-width {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+.textareaInput {
+    border: 0;
+    resize: none;
+    width: 100%;
+    height: 120px;
+    font-size: 14px;
+    padding: 8px;
+    margin-top: 4px;
+    word-break: break-all;
+    color: var(--background-text2);
+    background-color: rgb(53, 61, 79);
+    outline: 1px solid rgb(93, 93, 95);
+    font-family: 'misans', Fallback, sans-serif;
+    border-radius: 5px;
+}
+/* 按钮组样式 */
+.buttonGroup {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+.start, .pause, .clear {
+    border: 0;
+    width: 32%;
+    height: 30px;
+    font-size: 14px;
+    border-radius: 5px;
+    background-color: var(--input-color);
+    color: var(--foreground-text);
+    font-family: 'misans', Fallback, sans-serif;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.start:hover {
+    color: rgb(255, 203, 50);
+    background-color: rgba(255, 203, 50, 0.1);
+}
+.pause:hover {
+    color: rgb(113, 176, 253);
+    background-color: rgba(113, 176, 253, 0.1);
+}
+.clear:hover {
+    color: rgb(205, 125, 116);
+    background-color: rgba(205, 125, 116, 0.1);
+}
+
+/* -------------------------- 调式下拉框样式 -------------------------- */
+.modeSelection {
+    position: relative;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: var(--input-color);
+    color: var(--foreground-text);
+    cursor: pointer;
+    min-width: 180px;
+    text-align: left;
+}
+.modeSelection .combo-items {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background-color: var(--dialog-background-color);
+    border-radius: 5px;
+    padding: 5px 0;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.modeSelection .combo-items p {
+    padding: 6px 10px;
+    margin: 0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.modeSelection .combo-items p:hover {
+    background-color: #4f5870;
+}
+
+/* -------------------------- 响应式适配 -------------------------- */
+@media (max-width: 768px) {
+    #auto-play-panel, #transpose-panel {
+        width: calc(100% - 20px);
+        left: 10px;
+        bottom: 60px; /* 避开音量条 */
+    }
+    .textareaInput {
+        height: 80px;
+    }
+    .start, .pause, .clear {
+        height: 28px;
+        font-size: 12px;
+    }
+    .modeSelection {
+        min-width: 140px;
+        font-size: 12px;
+    }
+}
+/* Modal 遮罩层 */
+.modal {
+  display: none; /* 默认隐藏 */
+  position: fixed;
+  z-index: 9999;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+}
+
+/* 弹窗框 */
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  animation: popIn 0.3s ease;
+}
+
+/* 顶部关闭按钮 */
+.close-btn {
+  float: right;
+  font-size: 28px;
+  cursor: pointer;
+}
+.close-btn:hover { color: red; }
+
+/* 标题 */
+.modal-content h2 {
+  margin-top: 0;
+  font-size: 20px;
+  text-align: center;
+}
+
+/* 输入框 */
+.modal-content textarea {
+  width: 100%;
+  height: 120px;
+  resize: none;
+  padding: 8px;
+  font-size: 14px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* 控件行 */
+.modal-content .controls {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+.modal-content .controls input {
+  width: 60px;
+}
+
+/* 按钮区 */
+.modal-content .buttons {
+  text-align: center;
+  margin-top: 15px;
+}
+.modal-content button {
+  margin: 0 8px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #4CAF50;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.modal-content button:hover { background: #45a049; }
+
+/* 弹入动画 */
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+/* 2. 转调弹窗下拉框：绑定乐器颜色 */
+#transposeModal select,
+#transposeModal input {
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--note-color); /* 绑定乐器颜色 */
+}
+#transposeModal button {
+    background: var(--note-color); /* 绑定乐器颜色 */
+}
+#transposeModal button:hover {
+    background: var(--background-color-hover1); /* 绑定乐器按下色 */
+}
+
+/* 3. 自动演奏弹窗按钮：绑定乐器颜色 */
+.modal-content .music-control-btn[data-action="start"] {
+    background: var(--note-color); /* 绑定乐器颜色 */
+}
+.modal-content .music-control-btn[data-action="start"]:hover {
+    background: var(--background-color-hover1); /* 绑定乐器按下色 */
+}
+.modal-content .music-control-btn[data-action="pause"] {
+    background: var(--note-color); /* 绑定乐器颜色 */
+}
+.modal-content .music-control-btn[data-action="pause"]:hover {
+    background: var(--background-color-hover1); /* 绑定乐器按下色 */
+}
+.modal-content .music-control-btn[data-action="clear"] {
+    background: var(--note-color); /* 绑定乐器颜色 */
+}
+.modal-content .music-control-btn[data-action="clear"]:hover {
+    background: var(--background-color-hover1); /* 绑定乐器按下色 */
+}
+/* 修改页脚样式 */
+.footer {
+  font-size: 14px;
+  color: var(--genshin-gold); /* 使用原神金色调与整体风格统一 */
+  padding: 8px 15px;
+  background: rgba(62, 69, 86, 0.6); /* 与控制面板同风格半透明背景 */
+  backdrop-filter: blur(5px);
+  position: fixed;
+  bottom: 20px; /* 与音量控制保持相同底部距离 */
+  left: 20px; /* 左侧间距 */
+  width: auto; /* 宽度自适应内容 */
+  border-radius: 10px; /* 圆角风格 */
+  border: 1px solid rgba(211, 188, 142, 0.3); /* 统一边框样式 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* 增加阴影提升层次感 */
+  z-index: 98; /* 确保在背景之上，控件之下 */
+}
+
+.footer a {
+  color: var(--genshin-gold);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer a:hover {
+  color: var(--background-color-hover1); /*  hover效果与按钮保持一致 */
+}
+
+/* 移动端适配调整 */
+@media (max-width: 768px) {
+  .footer {
+    bottom: 10px;
+    left: 10px;
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+}

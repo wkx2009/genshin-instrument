@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <title>原神乐器模拟器</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/audioManager.js"></script>
+    <script src="js/script.js" defer></script>
+</head>
+<body>
+    <!-- 加载界面 -->
+    <div id="loadDiv" class="loadDiv">正在加载乐器...</div>
+    
+    <!-- 原神风格装饰 -->
+    <div class="genshin-decoration">
+        <div class="decoration-item decoration-1">♪</div>
+        <div class="decoration-item decoration-2">♫</div>
+    </div>
+    
+    <!-- 顶部控制区 -->
+    <div class="top-controls">
+        <!-- 乐器选择（保留，新增乐器已添加） -->
+        <div class="instrument-selection">
+            <div class="combo-box" onclick="toggleDropdown(this)">
+                <span id="instruments">风物之诗琴</span>
+                <div class="combo-items">
+                    <p onclick="selectInstrument('windsong_lyre', '风物之诗琴')">风物之诗琴</p>
+                    <p onclick="selectInstrument('floral_zither', '镜花之琴')">镜花之琴</p>
+                    <p onclick="selectInstrument('floral_zither_old', '镜花之琴(旧版)')">镜花之琴(旧版)</p>
+                    <p onclick="selectInstrument('vintage_lyre', '老旧的诗琴')">老旧的诗琴</p>
+                    <p onclick="selectInstrument('sound_of_echo', '余音')">余音</p>
+                    <p onclick="selectInstrument('yuko_zither', '悠可琴')">悠可琴</p>
+                    <p onclick="selectInstrument('leaping_lute', '跃律琴')">跃律琴</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 功能按钮（保留，绑定正确弹窗） -->
+        <div class="toolbar">
+            <div class="music" onclick="openTransposeModal()">
+                <span class="musicClef">↕</span>
+                <span class="btn-text">转调</span>
+            </div>
+            <div class="music" onclick="openModal()">
+                <span class="musicClef">▶</span>
+                <span class="btn-text">自动弹奏</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. 保留1个自动演奏弹窗（删除重复的） -->
+    <div id="autoPlayModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2>自动演奏</h2>
+            <label for="textareaInput">乐谱：</label>
+            <textarea id="textareaInput" class="textareaInput" placeholder="请输入乐谱，例如：(qwe)|3+asd"></textarea>
+            <div class="controls">
+                <label>BPM: <input type="number" id="bpm" value="60" min="30" max="240"></label>
+                <label>转调: <input type="number" id="transpose-num" value="0" min="-12" max="12"></label>
+            </div>
+            <div class="buttons">
+                <button class="music-control-btn" data-action="start">开始</button>
+                <button class="music-control-btn" data-action="pause">暂停</button>
+                <button class="music-control-btn" data-action="clear">清空</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 保留1个转调弹窗（删除冗余的transpose-panel面板） -->
+    <div id="transposeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeTransposeModal()">&times;</span>
+            <h2>转调设置</h2>
+            <div class="controls">
+                <label for="transpose-num">半音偏移：</label>
+                <input type="number" id="transpose-num" value="0" min="-12" max="12">
+            </div>
+            <div class="controls">
+                <label for="modeSelect">调式：</label>
+                <select id="modeSelect">
+                    <option>Ionian（自然大调）</option>
+                    <option>Dorian（多利亚调式）</option>
+                    <option>Phrygian（弗里几亚调式）</option>
+                    <option>Lydian（利底亚调式）</option>
+                    <option>Mixolydian（混合利底亚调式）</option>
+                    <option>Aeolian（自然小调）</option>
+                    <option>Locrian（洛克利亚调式）</option>
+                </select>
+            </div>
+            <div class="buttons">
+                <button onclick="applyTranspose()">应用</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 琴键区域（保留，无问题） -->
+    <div class="keyboard-container">
+        <div id="keyboard">
+            <!-- 第一排 -->
+            <div class="keyboard-row">
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="q">
+                        <span class="note2 music-color">♪</span>
+                        <span class="text">q</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="w">
+                        <span class="note3 music-color">♪</span>
+                        <span class="text">w</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="e">
+                        <span class="note2 music-color">♪</span>
+                        <span class="text">e</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="r">
+                        <span class="note1 music-color">♪</span>
+                        <span class="text">r</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="t">
+                        <span class="note1 music-color">♪</span>
+                        <span class="text">t</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="y">
+                        <span class="note5 music-color">♪</span>
+                        <span class="text">y</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="u">
+                        <span class="note5 music-color">♪</span>
+                        <span class="text">u</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 第二排 -->
+            <div class="keyboard-row">
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="a">
+                        <span class="note2 music-color">♪</span>
+                        <span class="text">a</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="s">
+                        <span class="note3 music-color">♪</span>
+                        <span class="text">s</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="d">
+                        <span class="note2 music-color">♪</span>
+                        <span class="text">d</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="f">
+                        <span class="note1 music-color">♪</span>
+                        <span class="text">f</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="g">
+                        <span class="note1 music-color">♪</span>
+                        <span class="text">g</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="h">
+                        <span class="note5 music-color">♪</span>
+                        <span class="text">h</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="j">
+                        <span class="note5 music-color">♪</span>
+                        <span class="text">j</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 第三排 -->
+            <div class="keyboard-row">
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="z">
+                        <span class="note2 music-color">♪</span>
+                        <span class="text">z</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="x">
+                        <span class="note3 music-color">♪</span>
+                        <span class="text">x</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="c">
+                        <span class="note2 music-color">♪</span>
+                        <span class="text">c</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="v">
+                        <span class="note1 music-color">♪</span>
+                        <span class="text">v</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="b">
+                        <span class="note1 music-color">♪</span>
+                        <span class="text">b</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="n">
+                        <span class="note5 music-color">♪</span>
+                        <span class="text">n</span>
+                    </button>
+                </div>
+                <div class="triangle">
+                    <div class="triangle-top"></div>
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                    <div class="triangle-bottom"></div>
+                    <button class="key" id="m">
+                        <span class="note5 music-color">♪</span>
+                        <span class="text">m</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 音量控制（保留） -->
+    <div class="volume-control">
+        <span>音量</span>
+        <input type="range" min="0" max="100" value="100" id="volume" title="调整音量">
+    </div>
+    <!-- 页脚 -->
+    <footer class="footer">
+    <p class="mb-1">
+    <a href="https://github.com/wkx2009/genshin-instrument" target="_blank">原神乐器模拟器</a>
+    </p>
+    <p>
+    <a href="https://github.com/wkx2009" target="_blank">Powered by wkx2009</a>
+    </p>
+    <details>
+    <summary>版权声明</summary>
+    <p><a href="https://hyperos.mi.com/font/about">本网页使用MiSans字体,版权由小米公司所有</a>
+    </p>
+    <p><a href="https://www.mihoyo.com">本网站使用《原神》相关内容，版权归米哈游所有，本网站与米哈游无关</a></p>
+    </details>
+    </footer>
+    <!--仅调试用
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script>   -->
+</body>
+</html>
