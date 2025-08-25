@@ -7,4 +7,5 @@ Disallow: /audio/
 Disallow: LICENSE
 Disallow: README.md
 Disallow: BingSiteAuth.xml
+Disallow: baidu_verify_codeva-dVfVRF6D4k.html.html
 Sitemap: https://genshin-music.68j87.top/sitemap.xml
